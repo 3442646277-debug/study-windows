@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#237c60">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23237c60'/%3E%3Ctext x='50' y='70' font-size='54' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'%3E考%3C/text%3E%3C/svg%3E">
+<title>每日学习规划｜2027考研·急诊专硕</title>
+<style>
+:root{
+  --green:#237c60;
+  --green-d:#1c634c;
+  --cream:#fdf6dd;
+  --line:#d9d2b8;
+  --text:#222;
+  --dim:#6b7280;
+  --bg:rgba(255,255,255,0.06);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:"PingFang SC","Microsoft YaHei",-apple-system,sans-serif;
+  background:var(--bg);color:var(--text);padding:12px;display:flex;justify-content:center;
+}
+.wrap{width:100%;max-width:960px;background:rgba(255,255,255,0.92);border-radius:14px;overflow:hidden;}
+
+.top-bar{display:flex;align-items:center;gap:10px;background:var(--green);padding:10px 14px;}
+.top-bar .brand{color:#fff;font-size:18px;font-weight:700;letter-spacing:0.03em;flex:1;}
+.top-bar .tabs{display:flex;gap:6px;}
+.top-bar .tabs button{background:rgba(255,255,255,0.15);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:14px;cursor:pointer;}
+.top-bar .tabs button.active{background:#fff;color:var(--green);font-weight:600;}
+
+.info-grid{display:grid;grid-template-columns:repeat(6,1fr);font-size:14px;}
+.info-cell{padding:9px 8px;border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;gap:3px;}
+.info-cell .k{font-size:12px;color:var(--dim);}
+.info-cell .v{font-weight:600;}
+.info-cell.hl{background:var(--cream);}
+.info-cell .v[contenteditable="true"]{outline:none;border-bottom:1px dashed transparent;}
+.info-cell .v[contenteditable="true"]:hover{border-bottom-color:#bbb;}
+.hl-num{background:#fff200;font-weight:700;padding:1px 8px;border-radius:4px;}
+.auto-dim{color:var(--dim);font-weight:500;}
+
+.count-bar{background:var(--green);color:#fff;text-align:center;padding:10px;font-size:18px;font-weight:600;letter-spacing:0.03em;}
+
+.ctrl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 14px;background:#f4f1e6;border-bottom:1px solid var(--line);font-size:14px;}
+.ctrl label{color:var(--dim);}
+.ctrl select{padding:6px 8px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;}
+.ctrl .content-input{flex:1;min-width:140px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;font-size:14px;}
+button{border:none;border-radius:8px;padding:7px 13px;font-size:14px;cursor:pointer;}
+.btn-start{background:var(--green);color:#fff;font-weight:600;}
+.btn-ghost{background:#e8e4d6;color:var(--text);}
+.timer-show{font-size:26px;font-weight:700;color:var(--green);font-variant-numeric:tabular-nums;margin-left:auto;}
+
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{background:var(--green);color:#fff;padding:8px 4px;border:1px solid var(--line);font-weight:600;}
+td{border:1px solid var(--line);padding:6px 6px;text-align:center;vertical-align:middle;}
+td[contenteditable="true"]{outline:none;min-width:40px;}
+td[contenteditable="true"]:hover{background:rgba(35,124,96,0.06);}
+td[contenteditable="true"]:focus{background:#fff;}
+td.plan{background:var(--cream);}
+.time-cell{display:flex;align-items:center;gap:4px;justify-content:center;}
+.time-cell input[type=time]{width:76px;padding:3px 4px;border:1px solid var(--line);border-radius:6px;font-size:12px;background:#fff;color:var(--text);}
+.time-sep{color:var(--dim);}
+.drag-handle{cursor:grab;text-align:center;color:var(--dim);font-size:15px;user-select:none;}
+.drag-handle:active{cursor:grabbing;}
+tr.dragging{opacity:0.5;}
+td select{padding:4px 6px;border:1px solid var(--line);border-radius:7px;font-size:13px;background:#fff;max-width:100%;}
+tr.rest td{background:#eceef0;color:var(--dim);}
+td.num{font-variant-numeric:tabular-nums;}
+.row-del{background:none;border:none;color:var(--dim);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:6px;}
+.row-del:hover{color:#e05555;background:rgba(224,85,85,0.1);}
+.add-row{width:100%;background:none;border-top:1px dashed var(--line);color:var(--dim);padding:9px;cursor:pointer;font-size:13px;}
+.add-row:hover{color:var(--green);}
+
+.bottom{display:grid;grid-template-columns:1fr 1.1fr;gap:12px;padding:12px 14px;}
+.box{border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+.box-title{background:var(--green);color:#fff;text-align:center;padding:8px;font-weight:600;}
+.box-body{padding:10px 12px;}
+.stat-line{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;gap:10px;}
+.stat-line .k{color:var(--dim);}
+.stat-line .v{font-weight:600;font-variant-numeric:tabular-nums;}
+table.mini{font-size:12.5px;}
+table.mini th{background:#eef3f0;color:var(--text);}
+table.mini td{padding:6px 4px;}
+
+.log-section{padding:0 14px 14px;}
+.log-list{display:flex;flex-direction:column;gap:8px;margin-top:10px;}
+.log-item{display:grid;grid-template-columns:1fr auto auto auto auto;gap:10px;align-items:center;background:#f7f5ec;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:13px;}
+.log-item .log-content{min-width:0;}
+.log-item .log-content b{display:block;}
+.log-item .log-content span{color:var(--dim);font-size:12px;}
+.log-item .log-subj{background:var(--green);color:#fff;border-radius:6px;padding:3px 9px;font-size:12px;}
+.log-item .log-subj.paused{background:#b08a3e;}
+.log-item .log-subj.manual{background:#5b7fa6;}
+.log-item .log-dur{font-variant-numeric:tabular-nums;font-weight:600;}
+.log-item .log-del{background:none;border:none;color:var(--dim);cursor:pointer;font-size:14px;}
+.log-item .log-del:hover{color:#e05555;}
+.log-empty{color:var(--dim);font-size:13px;text-align:center;padding:16px 0;}
+
+.view{display:none;}
+.view.active{display:block;}
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:14px;}
+.sum-card{border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center;}
+.sum-card .num{font-size:22px;font-weight:700;color:var(--green);font-variant-numeric:tabular-nums;}
+.sum-card .lbl{font-size:12px;color:var(--dim);margin-top:4px;}
+
+.cal-wrap{padding:0 14px 14px;}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.cal-head .month{font-size:16px;font-weight:600;}
+.cal-head button{background:#e8e4d6;padding:6px 11px;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.cal-grid .dow{text-align:center;font-size:12px;color:var(--dim);padding:4px 0;}
+.cal-cell{
+  aspect-ratio:1;border:1px solid var(--line);border-radius:10px;padding:6px;
+  display:flex;flex-direction:column;justify-content:space-between;min-height:64px;cursor:pointer;
+  background:#faf8f0;transition:transform .1s;
+}
+.cal-cell:hover{transform:scale(1.03);}
+.cal-cell .d{font-size:12px;color:var(--dim);}
+.cal-cell .h{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;}
+.cal-cell .p{font-size:11px;color:var(--dim);}
+.cal-cell.empty{background:transparent;border:none;cursor:default;}
+.cal-cell.empty:hover{transform:none;}
+.lv0{background:#f3f1e8;}
+.lv1{background:#dcefe5;}
+.lv2{background:#a9ddc4;}
+.lv3{background:#6cc79c;}
+.lv4{background:#237c60;}
+.lv4 .h,.lv4 .p{color:#fff;}
+.lv4 .d{color:rgba(255,255,255,0.75);}
+
+.history-table{padding:0 14px 14px;}
+.history-table table{font-size:13px;}
+.history-table td{cursor:pointer;}
+.history-table td:hover{background:rgba(35,124,96,0.06);}
+
+.backup-box{margin:0 14px 14px;border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+.backup-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+.backup-tip{flex:1;min-width:200px;font-size:12.5px;color:var(--dim);line-height:1.6;}
+
+.adjust-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;align-items:center;}
+.adjust-row select,.adjust-min{padding:7px 9px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;}
+.adjust-min{width:86px;}
+.adjust-row .content-input{flex:1;min-width:130px;}
+.adjust-hint{width:100%;font-size:11.5px;color:var(--dim);}
+
+/* 日记 */
+.diary-wrap{padding:14px;display:flex;flex-direction:column;gap:12px;}
+.diary-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.diary-head label{color:var(--dim);font-size:13px;}
+.diary-head input[type=date]{padding:7px 10px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;}
+.diary-head .saved{margin-left:auto;font-size:12px;color:var(--dim);}
+.diary-text{
+  width:100%;min-height:260px;resize:vertical;border:1px solid var(--line);border-radius:12px;
+  padding:14px;font-size:14px;line-height:1.8;font-family:inherit;background:#fff;outline:none;
+}
+.diary-text:focus{border-color:var(--green);}
+.diary-recent{display:flex;flex-direction:column;gap:8px;}
+.diary-recent h4{font-size:13px;color:var(--dim);font-weight:500;}
+.diary-item{background:#f7f5ec;border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;}
+.diary-item:hover{border-color:var(--green);}
+.diary-item .d{font-size:12px;color:var(--dim);margin-bottom:3px;}
+.diary-item .t{font-size:13px;line-height:1.6;white-space:pre-wrap;word-break:break-word;}
+.diary-empty{color:var(--dim);font-size:13px;text-align:center;padding:16px 0;}
+
+.mask{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;padding:16px;z-index:20;}
+.mask.open{display:flex;}
+.panel{background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;max-width:420px;padding:18px;}
+.panel h3{font-size:15px;margin-bottom:12px;}
+.panel .stat-line{font-size:13px;}
+.panel .log-list{margin-top:10px;max-height:300px;overflow:auto;}
+.panel .log-item{grid-template-columns:1fr auto auto;}
+.panel-actions{display:flex;gap:8px;margin-top:14px;}
+.panel-actions .grow{flex:1;}
+
+@media (max-width:640px){
+  .info-grid{grid-template-columns:repeat(2,1fr);}
+  .bottom{grid-template-columns:1fr;}
+  .summary{grid-template-columns:repeat(2,1fr);}
+  .timer-show{margin-left:0;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top-bar">
+    <div class="brand">2027 考研 · 急诊专硕</div>
+    <div class="tabs">
+      <button id="tabToday" class="active">今日看板</button>
+      <button id="tabDiary">每日日记</button>
+      <button id="tabHistory">历史总览</button>
+    </div>
+  </div>
+
+  <!-- ========== 今日看板 ========== -->
+  <div class="view active" id="viewToday">
+    <div class="info-grid">
+      <div class="info-cell hl"><span class="k">规划日期</span><span class="v" contenteditable="true" id="planDate">2026-11-08</span></div>
+      <div class="info-cell"><span class="k">星期</span><span class="v auto-dim" id="weekDay">周日</span></div>
+      <div class="info-cell"><span class="k">距初试剩余</span><span class="v hl-num" id="remainDays">--</span></div>
+      <div class="info-cell hl"><span class="k">考试日期</span><span class="v" contenteditable="true" id="examDate">2026-12-19</span></div>
+      <div class="info-cell"><span class="k">计划学习时长</span><span class="v" id="planHour">12.0 小时</span></div>
+      <div class="info-cell"><span class="k">今日完成度</span><span class="v" id="finishPct">0%</span></div>
+    </div>
+
+    <div class="count-bar" id="countText">距离 2027 考研初试还剩 -- 天</div>
+
+    <div class="ctrl">
+      <label>当前科目</label>
+      <select id="subjectSel">
+        <option value="西综">西综</option>
+        <option value="英语">英语</option>
+        <option value="政治">政治</option>
+      </select>
+      <input class="content-input" id="curContent" placeholder="本次专注内容（如：西综·内科真题）">
+      <button class="btn-start" id="timerBtn">开始专注</button>
+      <button class="btn-ghost" id="endBtn" style="display:none">结束记录</button>
+      <button class="btn-ghost" id="resetFocus">重置本次</button>
+      <div class="timer-show" id="focusTime">00:00:00</div>
+    </div>
+
+    <table id="planTable">
+      <thead>
+        <tr>
+          <th style="width:3%"></th>
+          <th style="width:12%">时段</th>
+          <th style="width:18%">时间</th>
+          <th style="width:25%">内容安排</th>
+          <th style="width:12%">类别</th>
+          <th style="width:12%">计划时长(分钟)</th>
+          <th style="width:12%">有效时长(分钟)</th>
+          <th style="width:4%"></th>
+        </tr>
+      </thead>
+      <tbody id="planBody"></tbody>
+    </table>
+    <button class="add-row" id="addRow">+ 新增时段</button>
+
+    <div class="bottom">
+      <div class="box">
+        <div class="box-title">今日完成度</div>
+        <div class="box-body">
+          <div class="stat-line"><span class="k">计划学习总时长</span><span class="v" id="planAllMin">720 分钟</span></div>
+          <div class="stat-line"><span class="k">已完成有效时长</span><span class="v" id="doneAllMin">0 分钟</span></div>
+          <div class="stat-line"><span class="k">今日完成度</span><span class="v" id="rateText">0.0%</span></div>
+          <div class="stat-line"><span class="k">计划折合学时</span><span class="v" id="planHourText">12.0 小时</span></div>
+          <div class="stat-line"><span class="k">实际折合学时</span><span class="v" id="realHour">0.0 小时</span></div>
+        </div>
+      </div>
+      <div class="box">
+        <div class="box-title">各类任务时间占比</div>
+        <div class="box-body">
+          <table class="mini">
+            <thead><tr><th>类别</th><th>计划时长</th><th>计划占比</th><th>有效时长</th><th>完成度</th></tr></thead>
+            <tbody id="ratioBody"></tbody>
+          </table>
+          <div class="adjust-row" id="adjustRow">
+            <select id="adjustSubject">
+              <option value="西综">西综</option>
+              <option value="英语">英语</option>
+              <option value="政治">政治</option>
+            </select>
+            <input class="content-input" id="adjustContent" placeholder="补录内容（如：西综·内科真题）">
+            <input class="adjust-min" id="adjustMin" type="number" min="1" step="1" placeholder="分钟">
+            <button class="btn-start" id="adjustAdd">添加补录</button>
+            <div class="adjust-hint">忘开计时的学习可在这里补录：选科目、填内容和时长，计入下方统计，并出现在专注记录里，可删除。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="log-section">
+      <div class="box-title" style="border-radius:12px 12px 0 0;">专注时段记录</div>
+      <div class="log-list" id="logList"></div>
+    </div>
+  </div>
+
+  <!-- ========== 每日日记 ========== -->
+  <div class="view" id="viewDiary">
+    <div class="diary-wrap">
+      <div class="diary-head">
+        <label>日期</label>
+        <input type="date" id="diaryDate">
+        <span class="saved" id="diarySaved"></span>
+      </div>
+      <textarea class="diary-text" id="diaryText" placeholder="今天有什么想法、状态、心情，随便记几笔…"></textarea>
+      <div class="diary-recent">
+        <h4>历史日记</h4>
+        <div id="diaryList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 历史总览 ========== -->
+  <div class="view" id="viewHistory">
+    <div class="summary">
+      <div class="sum-card"><div class="num" id="sumDays">0</div><div class="lbl">累计学习天数</div></div>
+      <div class="sum-card"><div class="num" id="sumHours">0</div><div class="lbl">累计学时(小时)</div></div>
+      <div class="sum-card"><div class="num" id="sumAvg">0</div><div class="lbl">日均学时(小时)</div></div>
+      <div class="sum-card"><div class="num" id="sumRate">0%</div><div class="lbl">平均完成度</div></div>
+    </div>
+
+    <div class="cal-wrap">
+      <div class="cal-head">
+        <button id="prevMonth">‹ 上一月</button>
+        <div class="month" id="calMonth">--</div>
+        <button id="nextMonth">下一月 ›</button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+
+    <div class="history-table">
+      <table>
+        <thead><tr><th>日期</th><th>星期</th><th>计划(分钟)</th><th>有效(分钟)</th><th>学时</th><th>完成度</th><th>记录条数</th></tr></thead>
+        <tbody id="historyBody"></tbody>
+      </table>
+    </div>
+
+    <div class="backup-box">
+      <div class="box-title">数据备份</div>
+      <div class="box-body backup-actions">
+        <p class="backup-tip">建议每周导出一次备份文件；清理浏览器缓存、换电脑或换浏览器前，先导出一份。需要恢复时用「导入备份」选回该文件即可。</p>
+        <button class="btn-ghost" id="exportBtn">导出备份（下载 JSON）</button>
+        <button class="btn-ghost" id="importBtn">导入备份</button>
+        <input type="file" id="importFile" accept="application/json,.json" hidden>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 明细弹窗 -->
+<div class="mask" id="mask">
+  <div class="panel">
+    <h3 id="detailTitle">当日明细</h3>
+    <div class="stat-line"><span class="k">计划时长</span><span class="v" id="detailPlan">0 分钟</span></div>
+    <div class="stat-line"><span class="k">有效时长</span><span class="v" id="detailEff">0 分钟</span></div>
+    <div class="stat-line"><span class="k">完成度</span><span class="v" id="detailRate">0%</span></div>
+    <div class="log-list" id="detailLogs"></div>
+    <div class="panel-actions">
+      <button class="btn-ghost grow" id="closeDetail">关闭</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================= 存储 ================= */
+const DB_KEY = "study_plan_db_v3";
+const SUBJECTS = ["西综","英语","政治"];
+const CATS = ["西综","英语","政治","休息"];
+const WEEK_CN = ["周日","周一","周二","周三","周四","周五","周六"];
+
+const defaultRows = [
+  {slot:"起床 + 早餐", time:"6:40-7:30", content:"", cat:"休息", plan:0},
+  {slot:"上午①", time:"07:40-09:30", content:"", cat:"西综", plan:110},
+  {slot:"上午②", time:"09:45-11:15", content:"", cat:"英语", plan:90},
+  {slot:"吃饭+休息", time:"11:25-12:40", content:"", cat:"休息", plan:0},
+  {slot:"下午①", time:"12:40-13:50", content:"", cat:"政治", plan:70},
+  {slot:"下午2", time:"14:00-15:30", content:"", cat:"西综", plan:90},
+  {slot:"下午3", time:"15:45-17:15", content:"", cat:"英语", plan:90},
+  {slot:"吃饭+洗澡", time:"17:15-19:00", content:"", cat:"休息", plan:0},
+  {slot:"晚间①", time:"19:00-20:30", content:"", cat:"政治", plan:90},
+  {slot:"晚间②", time:"20:45-22:00", content:"", cat:"西综", plan:75},
+  {slot:"晚间3", time:"22:15-23:15", content:"", cat:"英语", plan:60},
+  {slot:"休息", time:"23:15-00:00", content:"", cat:"休息", plan:45}
+];
+
+function todayKey(){
+  const d=new Date();
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+function pad(n){return String(n).padStart(2,"0");}
+
+let db = loadDB();
+
+function loadDB(){
+  try{
+    let raw = null;
+    if(window.api && window.api.readDB) raw = window.api.readDB();
+    else raw = localStorage.getItem(DB_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return { meta:{ examDate:"2026-12-19", title:"每日学习规划｜2027 考研 · 急诊专硕" }, days:{} };
+}
+function saveDB(){
+  const str = JSON.stringify(db);
+  if(window.api && window.api.writeDB) window.api.writeDB(str);
+  else localStorage.setItem(DB_KEY, str);
+}
+// 节流写盘：计时过程中不必每秒落盘
+let saveTimer=null;
+function scheduleSave(){
+  if(saveTimer) return;
+  saveTimer=setTimeout(()=>{ saveTimer=null; saveDB(); }, 3000);
+}
+
+let activeDate = todayKey();
+
+function getDay(key){
+  if(!db.days[key]){
+    db.days[key] = {
+      planDate: key,
+      examDate: db.meta.examDate,
+      rows: JSON.parse(JSON.stringify(defaultRows)),
+      eff: {"西综":0,"英语":0,"政治":0},
+      logs: [], curSubject:"西综", curContent:"", timerState:"idle", diary:""
+    };
+  }
+  // 兼容旧数据：类别归一、补手动有效时长字段
+  db.days[key].rows.forEach(r=>{
+    if(!CATS.includes(r.cat)) r.cat = r.cat==="休息"?"休息":"西综";
+    r.manualEff = Number(r.manualEff)||0;
+  });
+  return db.days[key];
+}
+
+const $ = s=>document.querySelector(s);
+let state = getDay(activeDate);
+
+/* ================= 工具 ================= */
+function fmtHMS(sec){
+  const h=String(Math.floor(sec/3600)).padStart(2,"0");
+  const m=String(Math.floor((sec%3600)/60)).padStart(2,"0");
+  const s=String(sec%60).padStart(2,"0");
+  return `${h}:${m}:${s}`;
+}
+function nowStr(){
+  const d=new Date();
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+function parseDate(s){
+  const [y,m,d]=s.split("-").map(Number);
+  return new Date(y, m-1, d);
+}
+function weekOf(s){
+  const d=parseDate(s);
+  if(isNaN(d)) return "";
+  return WEEK_CN[d.getDay()];
+}
+function esc(s){return String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+/* ================= 自动计算 ================= */
+function autoCalc(){
+  $("#weekDay").textContent = weekOf(state.planDate);
+  const exam = new Date(state.examDate + "T00:00:00");
+  const now = new Date();
+  const diff = exam - now;
+  const days = diff > 0 ? Math.ceil(diff/86400000) : 0;
+  const week = (days/7).toFixed(1);
+  $("#remainDays").textContent = days;
+  $("#countText").textContent = `距离 2027 考研初试还剩 ${days} 天 · 折合 ${week} 周`;
+}
+
+/* ================= 表格 ================= */
+function effMinForRow(i){
+  const cat = state.rows[i].cat;
+  if(!SUBJECTS.includes(cat)) return 0;
+  return Math.floor((state.eff[cat]||0)/60);
+}
+function splitTime(t){
+  const m=String(t||"").match(/(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})/);
+  return m?[m[1],m[2]]:["",""];
+}
+let dragIndex=null;
+function renderRows(){
+  const body = $("#planBody");
+  body.innerHTML = "";
+  state.rows.forEach((r,i)=>{
+    const tr = document.createElement("tr");
+    if(r.cat === "休息") tr.classList.add("rest");
+    const opts = CATS.map(c=>`<option value="${c}" ${c===r.cat?"selected":""}>${c}</option>`).join("");
+    const [st,et]=splitTime(r.time);
+    tr.innerHTML = `
+      <td class="drag-handle" draggable="true" title="拖动排序">⠿</td>
+      <td contenteditable="true" data-i="${i}" data-k="slot">${esc(r.slot)}</td>
+      <td class="time-cell">
+        <input type="time" class="t-start" data-i="${i}" value="${st}">
+        <span class="time-sep">-</span>
+        <input type="time" class="t-end" data-i="${i}" value="${et}">
+      </td>
+      <td contenteditable="true" class="plan" data-i="${i}" data-k="content">${esc(r.content)}</td>
+      <td><select data-i="${i}" data-k="cat">${opts}</select></td>
+      <td contenteditable="true" class="num" data-i="${i}" data-k="plan">${r.plan}</td>
+      <td contenteditable="true" class="num" data-i="${i}" data-k="manualEff">${r.manualEff>0?r.manualEff:effMinForRow(i)}</td>
+      <td><button class="row-del" title="删除">×</button></td>`;
+    body.appendChild(tr);
+  });
+  body.querySelectorAll("td[contenteditable]").forEach(td=>{
+    td.addEventListener("blur", ()=>{
+      const i=+td.dataset.i, k=td.dataset.k;
+      let v=td.textContent.trim();
+      if(k==="plan"||k==="manualEff") v=parseFloat(v)||0;
+      state.rows[i][k]=v;
+      saveDB();
+      if(k!=="manualEff") refreshStats();
+    });
+  });
+  body.querySelectorAll("select[data-k='cat']").forEach(sel=>{
+    sel.addEventListener("change",()=>{
+      const i=+sel.dataset.i;
+      state.rows[i].cat=sel.value;
+      trClass(i);
+      saveDB(); refreshStats();
+    });
+  });
+  body.querySelectorAll(".t-start, .t-end").forEach(inp=>{
+    inp.addEventListener("change",()=>{
+      const i=+inp.dataset.i;
+      const start=body.querySelector(`.t-start[data-i="${i}"]`).value;
+      const end=body.querySelector(`.t-end[data-i="${i}"]`).value;
+      state.rows[i].time = start&&end?`${start}-${end}`:(start||end||"");
+      saveDB();
+    });
+  });
+  body.querySelectorAll(".row-del").forEach((b,i)=>{
+    b.onclick=()=>{ state.rows.splice(i,1); renderRows(); saveDB(); refreshStats(); };
+  });
+  // 拖拽排序
+  body.querySelectorAll("tr").forEach((tr,i)=>{
+    const handle=tr.querySelector(".drag-handle");
+    handle.addEventListener("dragstart",(e)=>{
+      dragIndex=i; tr.classList.add("dragging");
+      e.dataTransfer.effectAllowed="move";
+      e.dataTransfer.setData("text/plain",String(i));
+    });
+    handle.addEventListener("dragend",()=>{ tr.classList.remove("dragging"); dragIndex=null; });
+    tr.addEventListener("dragover",(e)=>{ e.preventDefault(); e.dataTransfer.dropEffect="move"; });
+    tr.addEventListener("drop",(e)=>{
+      e.preventDefault();
+      if(dragIndex===null||dragIndex===i) return;
+      const [moved]=state.rows.splice(dragIndex,1);
+      state.rows.splice(i,0,moved);
+      renderRows(); saveDB(); refreshStats();
+    });
+  });
+}
+function trClass(i){
+  const tr = document.querySelector(`select[data-i="${i}"]`)?.closest("tr");
+  if(tr) tr.classList.toggle("rest", state.rows[i].cat==="休息");
+}
+
+function planMinTotal(){
+  let p=0;
+  state.rows.forEach(r=>{ if(SUBJECTS.includes(r.cat)) p += Number(r.plan)||0; });
+  return p;
+}
+function subjectPlanMin(subj){
+  return state.rows.filter(r=>r.cat===subj).reduce((a,r)=>a+(Number(r.plan)||0),0);
+}
+
+/* ================= 统计 ================= */
+function refreshStats(){
+  const planMin = planMinTotal();
+  const effSec = SUBJECTS.reduce((a,s)=>a+(state.eff[s]||0),0);
+  const effMin = Math.floor(effSec/60);
+  const rate = planMin>0 ? effMin/planMin : 0;
+
+  $("#planAllMin").textContent = planMin + " 分钟";
+  $("#planHourText").textContent = (planMin/60).toFixed(1) + " 小时";
+  $("#planHour").textContent = (planMin/60).toFixed(1) + " 小时";
+
+  const rb = $("#ratioBody");
+  rb.innerHTML = "";
+  SUBJECTS.forEach(s=>{
+    const eSec = state.eff[s]||0, eMin = Math.floor(eSec/60);
+    const planSubj = subjectPlanMin(s);
+    const planRatio = planMin>0 ? planSubj/planMin*100 : 0;
+    const finish = planSubj>0 ? eMin/planSubj*100 : 0;
+    rb.insertAdjacentHTML("beforeend",
+      `<tr><td>${s}</td><td class="num">${planSubj}</td><td class="num">${planRatio.toFixed(1)}%</td><td class="num">${eMin}</td><td class="num">${finish.toFixed(1)}%</td></tr>`);
+  });
+  rb.insertAdjacentHTML("beforeend",
+    `<tr><td><b>合计</b></td><td class="num"><b>${planMin}</b></td><td class="num"><b>100.0%</b></td><td class="num"><b>${effMin}</b></td><td class="num"><b>${(rate*100).toFixed(1)}%</b></td></tr>`);
+
+  updateLiveNumbers();
+  renderLogs();
+}
+
+// 轻量刷新：只更新数字，不重建列表/统计表结构（供每秒计时调用）
+function updateLiveNumbers(){
+  const planMin = planMinTotal();
+  const effSec = SUBJECTS.reduce((a,s)=>a+(state.eff[s]||0),0);
+  const effMin = Math.floor(effSec/60);
+  const rate = planMin>0 ? effMin/planMin : 0;
+
+  $("#doneAllMin").textContent = effMin + " 分钟";
+  $("#rateText").textContent = (rate*100).toFixed(1) + "%";
+  $("#finishPct").textContent = Math.round(rate*100) + "%";
+  $("#realHour").textContent = (effMin/60).toFixed(1) + " 小时";
+
+  const rows = $("#ratioBody").querySelectorAll("tr");
+  SUBJECTS.forEach((s,i)=>{
+    if(!rows[i]) return;
+    const eMin = Math.floor((state.eff[s]||0)/60);
+    const planSubj = subjectPlanMin(s);
+    const finish = planSubj>0 ? eMin/planSubj*100 : 0;
+    const tds = rows[i].querySelectorAll("td");
+    tds[3].textContent = eMin;
+    tds[4].textContent = finish.toFixed(1)+"%";
+  });
+  if(rows.length){
+    const last = rows[rows.length-1].querySelectorAll("td");
+    last[3].textContent = effMin;
+    last[4].textContent = (rate*100).toFixed(1)+"%";
+  }
+
+  // 表格有效时长列：未手填的行跟随专注+补录合计
+  state.rows.forEach((r,i)=>{
+    if(r.manualEff>0) return;
+    const td = document.querySelector(`td[data-i="${i}"][data-k="manualEff"]`);
+    if(td) td.textContent = effMinForRow(i);
+  });
+}
+
+/* ================= 补录（计入统计，生成正式记录） ================= */
+function renderAdjust(){
+  $("#adjustAdd").onclick=()=>{
+    const sub=$("#adjustSubject").value;
+    const content=$("#adjustContent").value.trim();
+    const min=parseFloat($("#adjustMin").value);
+    if(!min||min<=0){ alert("请输入有效的补录分钟数"); return; }
+    const sec=Math.round(min*60);
+    state.eff[sub]=(state.eff[sub]||0)+sec;
+    const ts=nowStr();
+    state.logs.push({subject:sub, content:content||"手动补录", start:ts, end:ts, sec:sec, manual:true});
+    $("#adjustContent").value="";
+    $("#adjustMin").value="";
+    saveDB(); refreshStats();
+  };
+  $("#adjustMin").addEventListener("keydown",e=>{ if(e.key==="Enter") $("#adjustAdd").click(); });
+}
+
+/* ================= 专注记录（支持暂停） ================= */
+function currentLog(){
+  const last = state.logs[state.logs.length-1];
+  return last && !last.end ? last : null;
+}
+
+function renderLogs(){
+  const box = $("#logList");
+  box.innerHTML = "";
+  if(state.logs.length===0){
+    box.innerHTML = '<div class="log-empty">暂无专注记录，点击「开始专注」后自动记录</div>';
+    return;
+  }
+  state.logs.forEach((log,i)=>{
+    const item = document.createElement("div");
+    item.className="log-item";
+    const pausedTag = (!log.end && state.timerState==="paused") ? " · 已暂停" : "";
+    item.innerHTML = `
+      <div class="log-content"><b>${esc(log.content||"未填写内容")}</b><span>${log.start} → ${log.end||("进行中"+pausedTag)}</span></div>
+      <span class="log-subj ${state.timerState==='paused'&&!log.end?'paused':''} ${log.manual?'manual':''}">${esc(log.subject)}${log.manual?' · 补录':''}</span>
+      <span class="log-dur">${fmtHMS(log.sec)}</span>
+      <button class="log-del" title="删除">×</button>`;
+    item.querySelector(".log-del").onclick=()=>{
+      state.eff[log.subject] = Math.max(0,(state.eff[log.subject]||0)-log.sec);
+      state.logs.splice(i,1);
+      if(!currentLog()) state.timerState="idle";
+      saveDB(); refreshStats(); syncTimerUI();
+    };
+    box.appendChild(item);
+  });
+}
+
+let timerId=null;
+function tick(){
+  state.eff[state.curSubject] = (state.eff[state.curSubject]||0)+1;
+  const last = currentLog();
+  if(last) last.sec++;
+  $("#focusTime").textContent = fmtHMS(last?last.sec:0);
+  updateLiveNumbers();
+  scheduleSave();
+}
+
+function syncTimerUI(){
+  const btn=$("#timerBtn"), end=$("#endBtn");
+  const st=state.timerState;
+  if(st==="running"){ btn.textContent="暂停"; end.style.display="inline-block"; }
+  else if(st==="paused"){ btn.textContent="继续"; end.style.display="inline-block"; }
+  else { btn.textContent="开始专注"; end.style.display="none"; }
+  const last=currentLog();
+  $("#focusTime").textContent = fmtHMS(last?last.sec:0);
+}
+
+$("#timerBtn").onclick=()=>{
+  if(state.timerState==="idle"){
+    // 开始新记录
+    state.curSubject=$("#subjectSel").value;
+    state.curContent=$("#curContent").value.trim();
+    state.logs.push({subject:state.curSubject, content:state.curContent, start:nowStr(), end:null, sec:0});
+    state.timerState="running";
+    timerId=setInterval(tick,1000);
+  }else if(state.timerState==="running"){
+    // 暂停：不归档，停表
+    clearInterval(timerId);
+    state.timerState="paused";
+  }else if(state.timerState==="paused"){
+    // 继续
+    state.timerState="running";
+    timerId=setInterval(tick,1000);
+  }
+  saveDB(); syncTimerUI(); refreshStats();
+};
+
+$("#endBtn").onclick=()=>{
+  const last=currentLog();
+  if(last){ last.end=nowStr(); }
+  clearInterval(timerId);
+  state.timerState="idle";
+  saveDB(); syncTimerUI(); refreshStats();
+};
+
+$("#resetFocus").onclick=()=>{
+  clearInterval(timerId);
+  state.logs = state.logs.filter(l=>l.end);
+  state.timerState="idle";
+  saveDB(); syncTimerUI(); refreshStats();
+};
+
+$("#addRow").onclick=()=>{
+  state.rows.push({slot:"新时段",time:"",content:"",cat:"西综",plan:60});
+  renderRows(); saveDB(); refreshStats();
+};
+
+/* ================= 日期编辑联动 ================= */
+$("#planDate").addEventListener("blur",e=>{
+  let v=e.target.textContent.trim();
+  if(/^\d{4}-\d{1,2}-\d{1,2}$/.test(v)){
+    const [y,m,d]=v.split("-").map(Number);
+    v=`${y}-${pad(m)}-${pad(d)}`;
+  }
+  state.planDate=v; e.target.textContent=v;
+  saveDB(); autoCalc();
+});
+$("#examDate").addEventListener("blur",e=>{
+  let v=e.target.textContent.trim();
+  if(/^\d{4}-\d{1,2}-\d{1,2}$/.test(v)){
+    const [y,m,d]=v.split("-").map(Number);
+    v=`${y}-${pad(m)}-${pad(d)}`;
+  }
+  state.examDate=v; e.target.textContent=v;
+  db.meta.examDate=v; saveDB(); autoCalc();
+});
+$("#subjectSel").addEventListener("change",e=>{state.curSubject=e.target.value;saveDB();});
+$("#curContent").addEventListener("input",e=>{state.curContent=e.target.value;});
+
+/* ================= 视图切换 ================= */
+$("#tabToday").onclick=()=>switchView("today");
+$("#tabDiary").onclick=()=>{ switchView("diary"); renderDiary(); };
+$("#tabHistory").onclick=()=>{ switchView("history"); renderHistory(); };
+function switchView(v){
+  $("#tabToday").classList.toggle("active",v==="today");
+  $("#tabDiary").classList.toggle("active",v==="diary");
+  $("#tabHistory").classList.toggle("active",v==="history");
+  $("#viewToday").classList.toggle("active",v==="today");
+  $("#viewDiary").classList.toggle("active",v==="diary");
+  $("#viewHistory").classList.toggle("active",v==="history");
+}
+
+/* ================= 每日日记 ================= */
+let diaryKey = todayKey();
+
+function renderDiary(){
+  $("#diaryDate").value = diaryKey;
+  const d = getDay(diaryKey);
+  $("#diaryText").value = d.diary || "";
+  updateSaved();
+  renderDiaryList();
+}
+function updateSaved(){
+  const t=new Date();
+  $("#diarySaved").textContent = `已保存 ${pad(t.getHours())}:${pad(t.getMinutes())}`;
+}
+let diarySaveTimer=null;
+function saveDiary(){
+  const d=getDay(diaryKey);
+  d.diary=$("#diaryText").value;
+  updateSaved();
+  if(diarySaveTimer) clearTimeout(diarySaveTimer);
+  diarySaveTimer=setTimeout(saveDB, 800);
+}
+$("#diaryDate").addEventListener("change",e=>{
+  if(e.target.value){ diaryKey=e.target.value; renderDiary(); }
+});
+$("#diaryText").addEventListener("input",saveDiary);
+
+function renderDiaryList(){
+  const box=$("#diaryList");
+  const keys=Object.keys(db.days).filter(k=>(db.days[k].diary||"").trim()).sort().reverse();
+  if(keys.length===0){ box.innerHTML='<div class="diary-empty">还没有日记，写第一篇吧</div>'; return; }
+  box.innerHTML="";
+  keys.slice(0,20).forEach(k=>{
+    const item=document.createElement("div");
+    item.className="diary-item";
+    const txt=db.days[k].diary.trim();
+    const preview=txt.length>60?txt.slice(0,60)+"…":txt;
+    item.innerHTML=`<div class="d">${k} ${weekOf(k)}</div><div class="t">${esc(preview)}</div>`;
+    item.onclick=()=>{ diaryKey=k; $("#diaryDate").value=k; $("#diaryText").value=db.days[k].diary||""; updateSaved(); };
+    box.appendChild(item);
+  });
+}
+
+/* ================= 历史总览 ================= */
+let calCursor = new Date();
+calCursor.setDate(1);
+
+function daySummary(key){
+  const d = db.days[key];
+  if(!d) return null;
+  const planMin = d.rows.filter(r=>SUBJECTS.includes(r.cat)).reduce((a,r)=>a+(Number(r.plan)||0),0);
+  const effSec = SUBJECTS.reduce((a,s)=>a+(d.eff[s]||0),0);
+  const effMin = Math.floor(effSec/60);
+  const rate = planMin>0 ? effMin/planMin*100 : 0;
+  return {planMin, effMin, hours:effMin/60, rate, logs:d.logs.length};
+}
+
+function renderSummary(){
+  const keys = Object.keys(db.days).filter(k=>daySummary(k).effMin>0);
+  const totalSec = keys.reduce((a,k)=>a+SUBJECTS.reduce((x,s)=>x+db.days[k].eff[s],0),0);
+  const totalMin = Math.floor(totalSec/60);
+  const hours = totalMin/60;
+  $("#sumDays").textContent = keys.length;
+  $("#sumHours").textContent = hours.toFixed(1);
+  $("#sumAvg").textContent = keys.length? (hours/keys.length).toFixed(1) : "0";
+  const avgRate = keys.length? keys.reduce((a,k)=>a+daySummary(k).rate,0)/keys.length : 0;
+  $("#sumRate").textContent = avgRate.toFixed(0)+"%";
+}
+
+function levelOf(rate, effMin){
+  if(effMin<=0) return "lv0";
+  if(rate<25) return "lv1";
+  if(rate<50) return "lv2";
+  if(rate<80) return "lv3";
+  return "lv4";
+}
+
+function renderCalendar(){
+  const grid = $("#calGrid");
+  grid.innerHTML = "";
+  const y=calCursor.getFullYear(), m=calCursor.getMonth();
+  $("#calMonth").textContent = `${y} 年 ${m+1} 月`;
+  ["日","一","二","三","四","五","六"].forEach(d=>{
+    const el=document.createElement("div"); el.className="dow"; el.textContent=d; grid.appendChild(el);
+  });
+  const firstDow = new Date(y,m,1).getDay();
+  const daysInMonth = new Date(y,m+1,0).getDate();
+  for(let i=0;i<firstDow;i++){
+    const e=document.createElement("div"); e.className="cal-cell empty"; grid.appendChild(e);
+  }
+  for(let d=1;d<=daysInMonth;d++){
+    const key=`${y}-${pad(m+1)}-${pad(d)}`;
+    const sum=daySummary(key);
+    const cell=document.createElement("div");
+    const lv = sum? levelOf(sum.rate,sum.effMin):"lv0";
+    cell.className=`cal-cell ${lv}`;
+    if(sum){
+      cell.innerHTML=`<div class="d">${d}</div><div class="h">${sum.hours.toFixed(1)}h</div><div class="p">${sum.rate.toFixed(0)}%</div>`;
+      cell.onclick=()=>openDetail(key);
+    }else{
+      cell.innerHTML=`<div class="d">${d}</div><div class="h"></div><div class="p"></div>`;
+    }
+    grid.appendChild(cell);
+  }
+}
+
+function renderHistoryTable(){
+  const body=$("#historyBody");
+  body.innerHTML="";
+  const keys=Object.keys(db.days).sort().reverse();
+  if(keys.length===0){
+    body.innerHTML='<tr><td colspan="7" style="color:var(--dim);padding:18px;">暂无历史记录</td></tr>';
+    return;
+  }
+  keys.forEach(key=>{
+    const s=daySummary(key);
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td>${key}</td><td>${weekOf(key)}</td>
+      <td class="num">${s.planMin}</td><td class="num">${s.effMin}</td>
+      <td class="num">${s.hours.toFixed(1)}h</td><td class="num">${s.rate.toFixed(1)}%</td>
+      <td class="num">${s.logs}</td>`;
+    tr.onclick=()=>openDetail(key);
+    body.appendChild(tr);
+  });
+}
+
+function renderHistory(){
+  renderSummary();
+  renderCalendar();
+  renderHistoryTable();
+}
+
+$("#prevMonth").onclick=()=>{calCursor.setMonth(calCursor.getMonth()-1);renderCalendar();};
+$("#nextMonth").onclick=()=>{calCursor.setMonth(calCursor.getMonth()+1);renderCalendar();};
+
+/* ================= 数据备份：导出 / 导入 ================= */
+$("#exportBtn").onclick=()=>{
+  const blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download=`考研看板备份-${todayKey()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+};
+$("#importBtn").onclick=()=>$("#importFile").click();
+$("#importFile").addEventListener("change",(e)=>{
+  const f=e.target.files[0];
+  if(!f) return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const data=JSON.parse(reader.result);
+      if(!data || typeof data!=="object" || !data.days) throw new Error("bad format");
+      db=data;
+      if(!db.meta) db.meta={examDate:"2026-12-19",title:"考研专注看板"};
+      saveDB();
+      alert("导入成功，页面即将刷新");
+      location.reload();
+    }catch(err){
+      alert("文件格式不对，导入失败");
+    }
+  };
+  reader.readAsText(f);
+  e.target.value="";
+});
+
+function openDetail(key){
+  const d=db.days[key]; if(!d) return;
+  const s=daySummary(key);
+  $("#detailTitle").textContent = `${key} ${weekOf(key)}`;
+  $("#detailPlan").textContent = s.planMin+" 分钟";
+  $("#detailEff").textContent = s.effMin+" 分钟";
+  $("#detailRate").textContent = s.rate.toFixed(1)+"%";
+  const box=$("#detailLogs"); box.innerHTML="";
+  if(d.logs.length===0){
+    box.innerHTML='<div class="log-empty">当天无专注记录</div>';
+  }else{
+    d.logs.forEach(log=>{
+      const item=document.createElement("div");
+      item.className="log-item";
+      item.innerHTML=`
+        <div class="log-content"><b>${esc(log.content||"未填写内容")}</b><span>${log.start} → ${log.end||"进行中"}</span></div>
+        <span class="log-subj">${esc(log.subject)}</span>
+        <span class="log-dur">${fmtHMS(log.sec)}</span>`;
+      box.appendChild(item);
+    });
+  }
+  $("#mask").classList.add("open");
+}
+$("#closeDetail").onclick=()=>$("#mask").classList.remove("open");
+$("#mask").onclick=e=>{if(e.target===$("#mask"))$("#mask").classList.remove("open");};
+
+/* ================= 初始化 ================= */
+document.querySelector(".brand").textContent = db.meta.title;
+$("#planDate").textContent=state.planDate;
+$("#examDate").textContent=state.examDate;
+$("#subjectSel").value=state.curSubject;
+$("#curContent").value=state.curContent;
+// 兼容刷新后恢复：未归档记录标记为暂停，需手动继续
+if(state.timerState==="running") state.timerState="paused";
+renderRows();
+autoCalc();
+refreshStats();
+renderAdjust();
+syncTimerUI();
+</script>
+</body>
+</html>
